@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, minimum-scale=1.0">
     <title>Catan Board Randomizer</title>
     <style>
         /* Base styles */
@@ -103,20 +103,12 @@
 
         /* Board container */
         .board-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 1rem;
-            padding: 1rem;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            overflow: auto;
+            touch-action: manipulation;
+            -webkit-overflow-scrolling: touch;
         }
 
         canvas {
-            max-width: 100%;
-            height: auto;
+            touch-action: manipulation;
         }
 
         /* Responsive adjustments */
