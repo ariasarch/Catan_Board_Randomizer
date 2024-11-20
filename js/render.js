@@ -3,6 +3,15 @@ class CatanRenderer {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         
+        // Add resize listener
+        window.addEventListener('resize', () => {
+            this.calculateHexSize();
+            // Re-render the board if you have access to the current board state
+            if (this.currentBoard) {
+                this.render(this.currentBoard, this.showPorts, this.useCustomImages);
+            }
+        });
+        
         // Calculate dynamic hex size based on canvas and board dimensions
         this.calculateHexSize();
         
@@ -12,6 +21,14 @@ class CatanRenderer {
     }
 
     calculateHexSize() {
+        // Get the current viewport dimensions
+        const viewportWidth = Math.min(window.innerWidth, document.documentElement.clientWidth);
+        const viewportHeight = Math.min(window.innerHeight, document.documentElement.clientHeight);
+
+        // Set canvas size based on viewport
+        this.canvas.width = Math.min(viewportWidth * 0.95, 800); // Max width of 800px
+        this.canvas.height = Math.min(viewportHeight * 0.7, 800); // Max height of 800px
+
         // Get the maximum dimensions based on canvas size
         const maxBoardWidth = 7; // Largest width needed for any mode
         const maxBoardHeight = 9; // Largest height needed for any mode

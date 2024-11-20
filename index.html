@@ -1,183 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=0.5, user-scalable=yes">
     <title>Catan Board Randomizer</title>
     <style>
-        /* Base styles */
         * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f5f5f5;
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            position: relative;
+            touch-action: manipulation;
         }
 
         .container {
-            max-width: 1200px;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 20px;
+        }
+
+        .board-container {
+            width: 100%;
+            height: auto;
+            min-height: 60vh;
+            touch-action: pan-x pan-y pinch-zoom;
+            -webkit-user-select: none;
+            user-select: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            touch-action: none;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .controls {
+            padding: 15px;
+            width: 100%;
+            max-width: 600px;
             margin: 0 auto;
-            padding: 1rem;
+            text-align: center;
         }
 
         .header {
+            padding: 15px;
             text-align: center;
-            margin-bottom: 2rem;
-            padding: 1rem;
         }
 
-        .header h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .header p {
-            color: #666;
-            font-style: italic;
-        }
-
-        /* Controls styling */
-        .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            padding: 1rem;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        h1 {
+            margin: 0;
+            padding: 10px 0;
         }
 
         .mode-selector {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            margin: 15px 0;
         }
 
         .radio-group {
             display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 10px 0;
         }
 
-        .radio-option {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .button {
-            padding: 0.75rem 1.5rem;
-            background: #2ecc71;
-            color: white;
-            border: none;
-            border-radius: 4px;
+        .radio-group button {
+            padding: 8px 16px;
             cursor: pointer;
-            font-size: 1rem;
-            transition: background 0.3s ease;
-        }
-
-        .button:hover {
-            background: #27ae60;
-        }
-
-        .toggle-button {
-            padding: 0.75rem 1.5rem;
-            background: #3498db;
-            color: white;
-            border: none;
+            border: 1px solid #ccc;
+            background: white;
             border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background 0.3s ease;
         }
 
-        .toggle-button:hover {
-            background: #2980b9;
+        .radio-group button:hover {
+            background: #f0f0f0;
         }
 
-        /* Board container */
-        .board-container {
-            touch-action: manipulation;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        canvas {
-            touch-action: manipulation;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .container {
-                padding: 0.5rem;
-            }
-
-            .header h1 {
-                font-size: 1.5rem;
-            }
-
-            .controls {
-                padding: 0.75rem;
-            }
-
-            .button, .toggle-button {
-                width: 100%;
-            }
-
-            .board-container {
-                /* Add to existing styles */
-                touch-action: pinch-zoom;
-                -webkit-overflow-scrolling: touch;
-                overflow: scroll;
-            }
-
-            canvas {
-                /* Add to existing styles */
-                touch-action: pinch-zoom;
-            }
-        }
-
-        /* Custom checkbox styling */
         .checkbox-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            margin: 15px 0;
         }
 
-        .checkbox-wrapper input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #f0f0f0;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header class="header">
+        <div class="header">
             <h1>Catan Board Randomizer</h1>
             <p>by Ari Peden-Asarch</p>
-        </header>
+        </div>
 
         <div class="controls">
             <div class="mode-selector">
-                <label>Select Mode:</label>
+                <div>Select Mode:</div>
                 <div class="radio-group">
-                    <label class="radio-option">
-                        <input type="radio" name="mode" value="Regular" checked>
-                        Regular
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="mode" value="Expansion">
-                        Expansion
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="mode" value="Mega">
-                        Mega
-                    </label>
+                    <button>Regular</button>
+                    <button>Expansion</button>
+                    <button>Mega</button>
                 </div>
             </div>
 
@@ -186,90 +127,19 @@
                 <label for="useCustomImages">Use Custom Images</label>
             </div>
 
-            <button id="generateButton" class="button">Generate New Board</button>
-            <button id="togglePortsButton" class="toggle-button">Show Ports</button>
+            <button>Generate New Board</button>
+            <button>Show Ports</button>
         </div>
 
         <div class="board-container">
-            <canvas id="boardCanvas"></canvas>
+            <!-- Canvas will be created here by JavaScript -->
         </div>
     </div>
 
-    <script type="module">
-        import CatanBoard from './js/board.js';
-        import CatanRenderer from './js/render.js';
-
-        let board;
-        let renderer;
-        let showPorts = false;
-
-        // Function to get appropriate canvas size based on screen size
-        function getCanvasSize() {
-            const isMobile = window.innerWidth < 768;
-            const padding = isMobile ? 20 : 40;
-            const size = isMobile ? Math.min(window.innerWidth - padding, window.innerHeight - 200) 
-                                : Math.min(800, window.innerWidth - padding);
-            return {
-                width: size,
-                height: size
-            };
-        }
-
-        // Initialize the canvas with appropriate size
-        function initCanvas() {
-            const canvas = document.getElementById('boardCanvas');
-            const { width, height } = getCanvasSize();
-            canvas.width = width;
-            canvas.height = height;
-            return canvas;
-        }
-
-        // Initialize the board and renderer
-        function init() {
-            const canvas = initCanvas();
-            renderer = new CatanRenderer(canvas);
-            generateNewBoard();
-        }
-
-        // Generate a new board
-        function generateNewBoard() {
-            const selectedMode = document.querySelector('input[name="mode"]:checked').value;
-            const useCustomImages = document.getElementById('useCustomImages').checked;
-            
-            board = new CatanBoard(selectedMode);
-            const generatedBoard = board.generate();
-            renderer.render(board, showPorts, useCustomImages);
-        }
-
-        // Toggle ports visibility
-        function togglePorts() {
-            const useCustomImages = document.getElementById('useCustomImages').checked;
-            showPorts = !showPorts;
-            renderer.render(board, showPorts, useCustomImages);
-            document.getElementById('togglePortsButton').textContent = 
-                showPorts ? 'Hide Ports' : 'Show Ports';
-        }
-
-        // Event listeners
-        document.getElementById('generateButton').addEventListener('click', generateNewBoard);
-        document.getElementById('togglePortsButton').addEventListener('click', togglePorts);
-        document.getElementById('useCustomImages').addEventListener('change', () => {
-            const useCustomImages = document.getElementById('useCustomImages').checked;
-            renderer.render(board, showPorts, useCustomImages);
-        });
-        document.querySelectorAll('input[name="mode"]').forEach(radio => {
-            radio.addEventListener('change', generateNewBoard);
-        });
-
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            const canvas = initCanvas();
-            renderer = new CatanRenderer(canvas);
-            renderer.render(board, showPorts, document.getElementById('useCustomImages').checked);
-        });
-
-        // Initialize when the page loads
-        window.addEventListener('load', init);
-    </script>
+    <!-- Scripts -->
+    <script type="module" src="./js/board.js"></script>
+    <script type="module" src="./js/port-generator.js"></script>
+    <script type="module" src="./js/render.js"></script>
+    <script type="module" src="./js/index.js"></script>
 </body>
 </html>
