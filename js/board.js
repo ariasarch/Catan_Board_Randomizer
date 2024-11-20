@@ -44,6 +44,12 @@ const GAME_MODES = {
 
 class CatanBoard {
     constructor(mode = 'Regular') {
+        this.setMode(mode);
+    }
+
+    setMode(mode) {
+        console.log('setMode called with:', mode);
+        console.log('Current mode before change:', this.mode);
         this.mode = mode;
         this.config = GAME_MODES[mode];
         this.board = [];
@@ -52,6 +58,72 @@ class CatanBoard {
         // Initialize the port generator and generate ports for this mode
         const portGenerator = new PortGenerator();
         this.config.ports = portGenerator.generatePortsForMode(mode);
+    }
+
+    generate(retries = 0, maxRetries = 100) {
+        console.log('Generating board for mode:', this.mode);
+        console.log('Current config:', this.config);
+        if (retries >= maxRetries) {
+            console.error('Max retries reached, unable to generate valid board');
+            return null;
+        }
+
+        const tiles = this.generateTiles();
+        const numbers = [...this.config.numbers];
+        this.shuffle(numbers);
+        
+        // Create the board structure
+        this.board = this.config.rowLengths.map(length => new Array(length));
+        
+        let tileIndex = 0;
+        let numberIndex = 0;
+
+        // Place tiles and numbers
+        for (let row = 0; row < this.board.length; row++) {
+            for (let col = 0; col < this.board[row].length; col++) {
+                if (tileIndex >= tiles.length) {
+                    console.error('Not enough tiles for the board configuration');
+                    return this.generate(retries + 1, maxRetries);
+                }
+
+                const tileType = tiles[tileIndex++];
+                let number = null;
+
+                if (tileType !== 'desert') {
+                    // Find a valid number
+                    let foundValidNumber = false;
+                    let attempts = 0;
+                    const maxAttempts = numbers.length;
+
+                    while (!foundValidNumber && attempts < maxAttempts) {
+                        const currentNumberIndex = (numberIndex + attempts) % numbers.length;
+                        if (this.isValidNumberPlacement(row, col, numbers[currentNumberIndex])) {
+                            number = numbers[currentNumberIndex];
+                            numbers.splice(currentNumberIndex, 1);
+                            foundValidNumber = true;
+                        }
+                        attempts++;
+                    }
+
+                    if (!foundValidNumber) {
+                        console.log('Retrying board generation - no valid number placement found');
+                        return this.generate(retries + 1, maxRetries);
+                    }
+                }
+
+                this.board[row][col] = {
+                    type: tileType,
+                    number: number
+                };
+            }
+        }
+
+        return {
+            board: this.board,
+            ports: this.config.ports,
+            config: this.config,
+            mode: this.mode
+        };
     }
 
     // Fisher-Yates shuffle algorithm
@@ -110,55 +182,6 @@ class CatanBoard {
             }
         }
         return neighbors;
-    }
-
-    // Generate a new board
-    generate() {
-        const tiles = this.generateTiles();
-        const numbers = [...this.config.numbers];
-        this.shuffle(numbers);
-        
-        // Create the board structure
-        this.board = this.config.rowLengths.map(length => new Array(length));
-        
-        let tileIndex = 0;
-        let numberIndex = 0;
-
-        // Place tiles and numbers
-        for (let row = 0; row < this.board.length; row++) {
-            for (let col = 0; col < this.board[row].length; col++) {
-                const tileType = tiles[tileIndex++];
-                let number = null;
-
-                if (tileType !== 'desert') {
-                    // Find a valid number
-                    let foundValidNumber = false;
-                    for (let i = numberIndex; i < numbers.length; i++) {
-                        if (this.isValidNumberPlacement(row, col, numbers[i])) {
-                            number = numbers[i];
-                            numbers.splice(i, 1);
-                            foundValidNumber = true;
-                            break;
-                        }
-                    }
-
-                    if (!foundValidNumber) {
-                        // If no valid number found, start over
-                        return this.generate();
-                    }
-                }
-
-                this.board[row][col] = {
-                    type: tileType,
-                    number: number
-                };
-            }
-        }
-
-        return {
-            board: this.board,
-            ports: this.config.ports
-        };
     }
 
     togglePorts() {

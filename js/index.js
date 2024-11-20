@@ -24,9 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Setup event listeners for controls
     document.querySelector('.radio-group').addEventListener('click', (e) => {
         if (e.target.tagName === 'BUTTON') {
-            board.mode = e.target.textContent.trim();
+            console.log('Button clicked:', e.target.textContent.trim());
+            const newMode = e.target.textContent.trim();
+            board.setMode(newMode);  // Use new setMode method instead of just setting mode
             generatedBoard = board.generate();
-            renderer.render(board, board.showPorts, useCustomImages);
+            renderer.render(generatedBoard, board.showPorts, useCustomImages);
         }
     });
 
