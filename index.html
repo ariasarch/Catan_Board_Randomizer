@@ -138,12 +138,15 @@
             }
 
             .board-container {
-                padding: 0.5rem;
+                /* Add to existing styles */
+                touch-action: pinch-zoom;
+                -webkit-overflow-scrolling: touch;
+                overflow: scroll;
             }
 
             canvas {
-                max-width: 100%;
-                height: auto;
+                /* Add to existing styles */
+                touch-action: pinch-zoom;
             }
         }
 
@@ -211,9 +214,12 @@
         // Function to get appropriate canvas size based on screen size
         function getCanvasSize() {
             const isMobile = window.innerWidth < 768;
+            const padding = isMobile ? 20 : 40;
+            const size = isMobile ? Math.min(window.innerWidth - padding, window.innerHeight - 200) 
+                                : Math.min(800, window.innerWidth - padding);
             return {
-                width: isMobile ? window.innerWidth - 40 : 800,
-                height: isMobile ? window.innerWidth - 40 : 800
+                width: size,
+                height: size
             };
         }
 
