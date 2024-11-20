@@ -18,7 +18,10 @@
             overflow-x: hidden;
             position: relative;
             touch-action: manipulation;
+            background: linear-gradient(180deg, #111, #000); /* Smooth gradient for night mode */
+            color: #f0f0f0; /* Light text for contrast */
         }
+
 
         .container {
             width: 100%;
@@ -41,7 +44,7 @@
         }
 
         canvas {
-            touch-action: none;
+            touch-action: pan-y pinch-zoom;
             max-width: 100%;
             height: auto;
         }
@@ -53,56 +56,108 @@
             margin: 0 auto;
             text-align: center;
         }
-
-        .header {
-            padding: 15px;
-            text-align: center;
-        }
-
-        h1 {
-            margin: 0;
-            padding: 10px 0;
+        
+        .header p {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.2em; /* Slightly larger for your name */
+            color: #ffd700; /* Fancy gold color */
+            text-shadow: 0 0 2px #ffa500, 0 0 4px #ff8c00;
+            text-align: center; /* Ensure it's centered under the title */
+            margin: 0 auto; /* Remove unnecessary margins */
+            margin-top: -5px; /* Slightly closer to the title */
         }
 
         .mode-selector {
             margin: 15px 0;
         }
 
-        .radio-group {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin: 10px 0;
-        }
-
         .radio-group button {
-            padding: 8px 16px;
-            cursor: pointer;
+            background-color: white; /* Default */
+            color: black;
             border: 1px solid #ccc;
-            background: white;
             border-radius: 4px;
+            transition: transform 0.2s, background-color 0.3s;
         }
 
         .radio-group button:hover {
-            background: #f0f0f0;
+            transform: scale(1.1);
+            background-color: #aed581; /* Lighter green on hover */
+            color: black;
+        }
+
+        .radio-group button:active {
+            transform: scale(0.9);
+            background-color: #8bc34a; /* Darker green when active */
+            color: black;
+        }
+
+        .radio-group button.clicked {
+            background-color: #8bc34a; /* Stays darker green after click */
+            color: black;
         }
 
         .checkbox-wrapper {
             margin: 15px 0;
         }
 
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 3em; /* Make the title larger */
+            color: #ffcc00;
+            text-align: center;
+            text-shadow: 0 0 4px #ff9900, 0 0 8px #ff6600, 0 0 16px #ff3300;
+            margin-bottom: 10px; /* Reduce the space below the title */
+        }
+
         button {
-            margin: 5px;
-            padding: 8px 16px;
-            border: 1px solid #ccc;
-            background: white;
+            font-family: 'Press Start 2P', cursive; /* You can customize this */
+            font-size: 1em;
+            padding: 10px 20px;
+            color: black; /* Default text color */
+            background-color: #ffcc00; /* Default background */
+            border: 3px solid #ff9900;
             border-radius: 4px;
+            transition: transform 0.2s, background-color 0.3s;
             cursor: pointer;
         }
 
         button:hover {
-            background: #f0f0f0;
+            transform: scale(1.1);
+            background-color: #aed581; /* Lighter green background on hover */
+            color: black; /* Keep text color black or customize */
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4); /* Optional: subtle shadow */
         }
+
+        button:active {
+            transform: scale(0.9);
+            background-color: #8bc34a; /* Darker green background when active */
+            color: black; /* Keep text color consistent */
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+        }
+
+        button.clicked {
+            background-color: #8bc34a; /* Darker green stays after click */
+            color: black; /* Text remains black */
+        }
+
+        button.clicked:hover {
+            background-color: #aed581; /* Lighter green on hover when clicked */
+            color: black; /* Ensure text visibility */
+        }
+
+        button:not(.radio-group button):hover {
+            transform: scale(1.1);
+            background-color: #ff9900; /* Darker version of itself when hovered */
+            color: black;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4); /* Optional subtle shadow */
+        }
+
+        button:not(.radio-group button):active {
+            transform: scale(0.9);
+            background-color: #cc7a00; /* Even darker when active */
+            color: black;
+        }
+
     </style>
 </head>
 <body>
@@ -114,9 +169,8 @@
 
         <div class="controls">
             <div class="mode-selector">
-                <div>Select Mode:</div>
                 <div class="radio-group">
-                    <button>Regular</button>
+                    <button class="clicked">Regular</button>
                     <button>Expansion</button>
                     <button>Mega</button>
                 </div>
@@ -137,6 +191,19 @@
     </div>
 
     <!-- Scripts -->
+    <script>
+        const buttons = document.querySelectorAll('.radio-group button'); // Only target radio-group buttons
+
+        buttons.forEach((button) => {
+            button.addEventListener('click', () => {
+                // Remove 'clicked' class from all radio-group buttons
+                buttons.forEach((btn) => btn.classList.remove('clicked'));
+
+                // Add 'clicked' class to the clicked radio-group button
+                button.classList.add('clicked');
+            });
+        });
+    </script>
     <script type="module" src="./js/board.js"></script>
     <script type="module" src="./js/port-generator.js"></script>
     <script type="module" src="./js/render.js"></script>
