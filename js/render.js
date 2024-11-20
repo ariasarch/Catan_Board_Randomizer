@@ -216,9 +216,9 @@ class CatanRenderer {
 
 // Keep the original color constants
 const COLORS = {
-    desert: '#f4d03f',
+    desert: '#ffe69a',
     wheat: '#f1c40f',
-    wood: '#27ae60',
+    wood: '#004c05',
     sheep: '#2ecc71',
     brick: '#c0392b',
     ore: '#7f8c8d',
@@ -230,7 +230,7 @@ const COLORS = {
 const PORT_COLORS = {
     '3:1': '#ffffff',
     'wheat': '#f1c40f',
-    'wood': '#27ae60',
+    'wood': '#004c05',
     'sheep': '#2ecc71',
     'brick': '#c0392b',
     'ore': '#7f8c8d'
