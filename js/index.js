@@ -13,44 +13,53 @@ document.addEventListener('DOMContentLoaded', () => {
     const board = new CatanBoard();
     
     // Generate initial board
-    let generatedBoard = board.generate();
+    let currentBoard = board.generate();
     
     // Initial render
-    renderer.render(board, false, false);
-
-    // Track current state
-    let useCustomImages = false;
+    renderer.render(currentBoard, false, false);
 
     // Setup event listeners for controls
     document.querySelector('.radio-group').addEventListener('click', (e) => {
         if (e.target.tagName === 'BUTTON') {
-            console.log('Button clicked:', e.target.textContent.trim());
             const newMode = e.target.textContent.trim();
-            board.setMode(newMode);  // Use new setMode method instead of just setting mode
-            generatedBoard = board.generate();
-            renderer.render(generatedBoard, board.showPorts, useCustomImages);
+            board.setMode(newMode);
+            currentBoard = board.generate();
+            renderer.render(currentBoard, board.showPorts, useCOImages.checked || useWAImages.checked);
         }
     });
 
-    const buttons = document.querySelectorAll('button');
-    const generateButton = buttons[3]; // Fourth button (after the 3 mode buttons)
-    const portButton = buttons[4]; // Fifth button
+    const useWAImages = document.querySelector('#useWAImages');
+    const useCOImages = document.querySelector('#useCOImages');
 
-    generateButton.addEventListener('click', () => {
-        generatedBoard = board.generate();
-        renderer.render(board, board.showPorts, useCustomImages);
+    useWAImages.addEventListener('change', () => {
+        if(useWAImages.checked) {
+            useCOImages.checked = false;
+            renderer.setImageFolder('images');
+        } else {
+            renderer.setImageFolder(null);
+            renderer.render(currentBoard, board.showPorts, false);  // Added this line to render with defaults
+        }
     });
 
+    useCOImages.addEventListener('change', () => {
+        if(useCOImages.checked) {
+            useWAImages.checked = false;
+            renderer.setImageFolder('images2');
+        } else {
+            renderer.setImageFolder(null);
+            renderer.render(currentBoard, board.showPorts, false);  // Added this line to render with defaults
+        }
+    });
+
+    const generateButton = document.querySelector('.controls > button:nth-last-child(2)');
+    generateButton.addEventListener('click', () => {
+        currentBoard = board.generate();
+        renderer.render(currentBoard, board.showPorts, useCOImages.checked || useWAImages.checked);
+    });
+
+    const portButton = document.querySelector('.controls > button:last-child');
     portButton.addEventListener('click', () => {
         board.showPorts = board.togglePorts();
-        renderer.render(board, board.showPorts, useCustomImages);
+        renderer.render(currentBoard, board.showPorts, useCOImages.checked || useWAImages.checked);
     });
-
-    const customImagesCheckbox = document.querySelector('#useCustomImages');
-    if (customImagesCheckbox) {
-        customImagesCheckbox.addEventListener('change', (e) => {
-            useCustomImages = e.target.checked;
-            renderer.render(board, board.showPorts, useCustomImages);
-        });
-    }
 });

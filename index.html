@@ -145,6 +145,26 @@
             color: black; /* Ensure text visibility */
         }
 
+        .image-buttons {
+            margin: 15px 0;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .image-select-btn {
+            padding: 8px 16px;
+            background-color: #444;
+            color: white;
+            border: 2px solid #666;
+        }
+
+        .image-select-btn.active {
+            background-color: #8bc34a;
+            color: black;
+            border-color: #689f38;
+        }
+
         button:not(.radio-group button):hover {
             transform: scale(1.1);
             background-color: #ff9900; /* Darker version of itself when hovered */
@@ -177,8 +197,10 @@
             </div>
 
             <div class="checkbox-wrapper">
-                <input type="checkbox" id="useCustomImages">
-                <label for="useCustomImages">Use Custom Images</label>
+                <input type="checkbox" id="useWAImages">
+                <label for="useWAImages">WA Images</label>
+                <input type="checkbox" id="useCOImages">
+                <label for="useCOImages">CO Images</label>
             </div>
 
             <button>Generate New Board</button>

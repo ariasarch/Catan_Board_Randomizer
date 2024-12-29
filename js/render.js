@@ -12,7 +12,6 @@ class CatanRenderer {
         
         this.calculateHexSize();
         this.imageCache = new Map();
-        this.preloadImages();
     }
 
     calculateHexSize() {
@@ -41,13 +40,21 @@ class CatanRenderer {
         this.centerY = this.canvas.height / 2;
     }
 
-    preloadImages() {
+    setImageFolder(folder) {
+        this.currentImageFolder = folder;
+        this.imageCache.clear();
+        if (!folder) return;
+        
         const resources = ['desert', 'wheat', 'wood', 'sheep', 'brick', 'ore'];
         resources.forEach(resource => {
             const img = new Image();
-            img.src = `./images/${resource}.png`;
+            img.src = `./${folder}/${resource}.png`;
             img.onload = () => {
                 this.imageCache.set(resource, img);
+                // Re-render when each image loads
+                if (this.currentBoard) {
+                    this.render(this.currentBoard, this.showPorts, true);
+                }
             };
         });
     }
